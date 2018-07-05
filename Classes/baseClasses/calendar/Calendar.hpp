@@ -6,6 +6,8 @@
 #include "baseClasses/ui/UI.hpp"
 #include "baseClasses/UserDefault.hpp"
 #include "baseClasses/digitEx/cDigit.hpp"
+
+
 struct dayLevel
 {
 	std::string day;
