@@ -1,0 +1,10 @@
+cocos2d/
+proj.android-studio/app/build/
+proj.ios_mac/ios/
+proj.ios_mac/
+proj.win32/Debug.win32
+proj.win32/Release.win32
+proj.win32/.vs/
+proj.win32/
+proj.android-studio/
+Resources/
