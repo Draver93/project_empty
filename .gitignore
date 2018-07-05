@@ -8,3 +8,5 @@ proj.win32/.vs/
 proj.win32/
 proj.android-studio/
 Resources/
+OniiChan/
+.cocos-project.json
