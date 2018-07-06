@@ -27,6 +27,7 @@ private:
 	cButton *btnM, *btnW;
 	cCheckBox *tutorial, *sound;
 public:
+	bool complete;
 	cCreateProfileDialog();
 	~cCreateProfileDialog();
 

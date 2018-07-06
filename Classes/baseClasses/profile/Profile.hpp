@@ -80,10 +80,15 @@ private:
 	};
 	std::vector<infoElevent*> infoElements;
 
+	cocos2d::Label *aScore, *bScore, *lScore;
+
 public:
 	bool firstStart = false;
 	cProfile(cocos2d::Size sizeProfile);
 	~cProfile();
+	void updateStats();
+	void hide();
+	void show();
 };
 
 #endif // !PROFILE_HPP

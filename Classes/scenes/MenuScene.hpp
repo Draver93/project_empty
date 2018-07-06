@@ -15,6 +15,10 @@
 class cMenuScene : public cBaseScene
 {
 private:
+	cCreateProfileDialog * prof;
+	cocos2d::Rect mdlWndRect;
+	cWindow *bgWnd;
+
 	cocos2d::Label *wndName;
 	cocos2d::Sprite *background;
 	cDropDown *dd;

@@ -2,6 +2,7 @@
 
 cCreateProfileDialog::cCreateProfileDialog()
 {
+	complete = false;
 	sex = false;
 	choose = 0;
 	sound = false, tutorial = false;
@@ -308,6 +309,7 @@ cCreateProfileDialog::cCreateProfileDialog()
 	acceptBtn->addChild(label_accept);
 	acceptBtn->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
 	{
+		if(textField->getString() == "")return true;
 		userDefault->profile["sName"] = textField->getString();
 		userDefault->profile["bSex"] = sex;
 		userDefault->profile["sAvatarName"] = avatars.at(choose)->getName();
@@ -315,7 +317,7 @@ cCreateProfileDialog::cCreateProfileDialog()
 		userDefault->profile["bTutorial"] = tutorial->getActive();
 		userDefault->saveProfile();
 		this->hide(0);
-
+		complete = true;
 		return true;
 	};
 

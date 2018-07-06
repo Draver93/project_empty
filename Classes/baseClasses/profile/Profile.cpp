@@ -11,6 +11,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 	auto gTtfConfigHd = userDefault->fontHd;
 	std::string avatarFilePath = userDefault->profile["sAvatarName"];
 	std::string nameData = userDefault->profile["sName"];
+	float indent = visibleSize.height / 70.0f;
 
 	//avatar
 	cocos2d::Sprite *sAvatar = cocos2d::Sprite::create(avatarFilePath);
@@ -77,20 +78,23 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 			infoElevent *el = new infoElevent();
 			el->node = new cBaseNode();
 
-			cocos2d::Label *aScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(average).substr(0, 3), cocos2d::TextHAlignment::CENTER);
+			aScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(average).substr(0, std::to_string(average).find('.') + 2), cocos2d::TextHAlignment::CENTER);
 			setNodeInRect(aScore, sizeProfile * 0.3f, 0);
 			aScore->setLocalZOrder(2);
+			aScore->setAnchorPoint(cocos2d::Vec2(0.0f, 0.5f));
 			el->node->addChild(aScore);
 			auto sz = aScore->getContentSize() * aScore->getScale();
+			aScore->setPosition(0, -sz.height / 2.0f);
 
 			cocos2d::Label *aScoreL = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Сред. б.", cocos2d::TextHAlignment::CENTER);
+			aScoreL->setAnchorPoint( cocos2d::Vec2( 0.0f, 0.5f ) );
 			setNodeInRect(aScoreL, sz / 1.5f, 0);
 			auto szL = aScoreL->getContentSize() * aScoreL->getScale();
-			aScoreL->setPosition(-sz.width / 2.0f + szL.width / 2.0f, sz.height / 2.0f + szL.height * 0.8f);
+			aScoreL->setPosition(0, szL.height / 2.0f);
 			el->node->addChild(aScoreL);
 
 
-			el->node->setPosition(sAvatar->getPosition().x + sizeProfile.width * 0.3f, sAvatar->getPosition().y);
+			el->node->setPosition(sAvatar->getPosition().x + avaSize.width / 2.0f + indent, sAvatar->getPosition().y);
 			el->originPos = el->node->getPosition();
 			this->addChild(el->node);
 			infoElements.push_back(el);
@@ -100,19 +104,21 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 			infoElevent *el = new infoElevent();
 			el->node = new cBaseNode();
 
-			cocos2d::Label *bScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(best).substr(0, 6), cocos2d::TextHAlignment::CENTER);
+			bScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(best).substr(0, std::to_string(best).find('.') + 5), cocos2d::TextHAlignment::CENTER);
 			setNodeInRect(bScore, sizeProfile * 0.3f, 0);
 			bScore->setLocalZOrder(2);
+			bScore->setAnchorPoint(cocos2d::Vec2(1.0f, 0.5f));
 			el->node->addChild(bScore);
 			auto sz = bScore->getContentSize() * bScore->getScale();
+			bScore->setPosition(0, -sz.height / 2.0f);
 
 			cocos2d::Label *bScoreL = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Лучш. сч.", cocos2d::TextHAlignment::CENTER);
+			bScoreL->setAnchorPoint(cocos2d::Vec2(1.0f, 0.5f));
 			setNodeInRect(bScoreL, sz / 1.5f, 0);
 			auto szL = bScoreL->getContentSize() * bScoreL->getScale();
-			bScoreL->setPosition(-sz.width / 2.0f + szL.width / 2.0f, sz.height / 2.0f + szL.height * 0.8f);
+			bScoreL->setPosition(0, szL.height / 2.0f);
 			el->node->addChild(bScoreL);
-
-			el->node->setPosition(sAvatar->getPosition().x - sizeProfile.width * 0.3f, sAvatar->getPosition().y + avaSize.height / 4.0f);
+			el->node->setPosition(sAvatar->getPosition().x - avaSize.width / 2.0f - indent, sAvatar->getPosition().y + avaSize.height / 4.0f);
 			el->originPos = el->node->getPosition();
 			this->addChild(el->node);
 			infoElements.push_back(el);
@@ -122,30 +128,32 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 			infoElevent *el = new infoElevent();
 			el->node = new cBaseNode();
 
-			cocos2d::Label *lScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(last).substr(0, 6), cocos2d::TextHAlignment::CENTER);
+			lScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(last).substr(0, std::to_string(last).find('.') + 5), cocos2d::TextHAlignment::CENTER);
+			lScore->setAnchorPoint(cocos2d::Vec2(1.0f, 0.5f));
 			setNodeInRect(lScore, sizeProfile * 0.3f, 0);
 			lScore->setLocalZOrder(2);
 			el->node->addChild(lScore);
 			auto sz = lScore->getContentSize() * lScore->getScale();
+			lScore->setPosition(0, -sz.height / 2.0f);
 
 			cocos2d::Label *lScoreL = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Посл. сч.", cocos2d::TextHAlignment::CENTER);
+			lScoreL->setAnchorPoint(cocos2d::Vec2(1.0f, 0.5f));
 			setNodeInRect(lScoreL, sz / 1.5f, 0);
 			auto szL = lScoreL->getContentSize() * lScoreL->getScale();
-			lScoreL->setPosition(-sz.width / 2.0f + szL.width / 2.0f,sz.height / 2.0f + szL.height * 0.8f);
+			lScoreL->setPosition(0 , szL.height / 2.0f);
 			el->node->addChild(lScoreL);
 
-			el->node->setPosition(sAvatar->getPosition().x - sizeProfile.width * 0.3f, sAvatar->getPosition().y - avaSize.height / 4.0f);
+			el->node->setPosition(sAvatar->getPosition().x - avaSize.width / 2.0f - indent, sAvatar->getPosition().y - avaSize.height / 4.0f);
 			el->originPos = el->node->getPosition();
 			this->addChild(el->node);
 			infoElements.push_back(el);
 		}
 
 		{
-			float indent = visibleSize.height / 70.0f;
-
 			float h = avaSize.width / 4.0f;
 			statValLabel = cocos2d::Label::createWithTTF(*gTtfConfig, "0.0", cocos2d::TextHAlignment::CENTER);
 			setNodeSize(statValLabel, h, true, false);
+			statValLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 1.0f));
 			statValLabel->setPosition(0, -size.height / 2.0f + indent + h /2.0f);
 			this->addChild(statValLabel);
 		}
@@ -250,7 +258,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 	};
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(this->listener, 1);
 
-	secondUpdate = [&](float dt)
+	secondUpdate = [=](float dt)
 	{
 		statVal.update(dt);
 
@@ -274,7 +282,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 		}
 		auto node = this->getChildByName("ava");
 		auto avaSize = node->getContentSize() * node->getScale();
-		float indent = 360.0f / 8.0f;
+		float indentSphere = 360.0f / 8.0f;
 		if (stats.statAngle > 360)stats.statAngle = 0;
 		else if(stats.statAngle < 0)stats.statAngle = 360;
 
@@ -282,7 +290,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 		int centralElementAngle = -1;
 		for (int i = 0; i < 8; i++)
 		{
-			float angle = stats.statAngle + i * indent;
+			float angle = stats.statAngle + i * indentSphere;
 			int fullCicle = angle / 360;
 			angle -= 360 * fullCicle;
 			if (angle < 180 + 10.0f && angle > 180 - 10.0f)
@@ -300,15 +308,20 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 			float wdth = avaSize.width / (1.5f + 1.5f * ((y + 1.0f) / 2.0f));
 			setNodeSize(node, wdth, true, true);
 
-			if (y > 0.0f) node->setLocalZOrder(-1);
-			else node->setLocalZOrder(3);
+			float cent = avaSize.width / (1.5f + 1.5f * ((0.5f) / 2.0f));
+			float front = avaSize.width / (1.5f + 1.5f * ((0.8f) / 2.0f));
+
+			if (wdth > front) node->setLocalZOrder(3);
+			else if (wdth > cent) node->setLocalZOrder(2);
+			else  node->setLocalZOrder(-1);
+			
 
 			node->setPosition(stats.pos.x + (x * (stats.size.width + wdth) / 2.0f), stats.pos.y + (y * stats.size.height / 2.0f));
 		}
 
 		for(auto it : infoElements)
 		{
-			it->update(dt, indent / 4.0f);
+			it->update(dt, indentSphere / 4.0f);
 		}
 
 		//float angle = stats.statAngle + i * indent;
@@ -329,7 +342,8 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 
 				statValLabel->setOpacity(op);
 				cocos2d::Node *node = this->getChildByName("el" + std::to_string(centralElement + 1));
-				statValLabel->setPosition(node->getPosition().x, statValLabel->getPosition().y);
+				float height = (node->getContentSize() * node->getScale()).height;
+				statValLabel->setPosition(node->getPosition().x, node->getPosition().y - height / 2.0f - indent);
 			}
 			else statValLabel->setOpacity(0);
 		}
@@ -340,3 +354,44 @@ cProfile::~cProfile()
 {
 }
 
+void cProfile::updateStats()
+{
+	//array skils
+	cUserDefault *userDefault = cUserDefault::getInstance();
+	auto skils = userDefault->profile["aStats"];
+	for(int i = 0; i < skils.size(); i++)
+		profileSkills.push_back(skils.at(i));
+	
+
+	float average = userDefault->profile["fAverageScore"];
+	float best = userDefault->profile["fBestScore"];
+	float last = userDefault->profile["fLastScore"];
+
+	bScore->setString(std::to_string(best).substr(0, std::to_string(best).find('.') + 5));
+	setNodeInRect(bScore, size * 0.3f, 0);
+	auto sz = bScore->getContentSize() * bScore->getScale();
+	bScore->setPosition(0, -sz.height / 2.0f);
+
+	lScore->setString(std::to_string(last).substr(0, std::to_string(last).find('.') + 5));
+	setNodeInRect(lScore, size * 0.3f, 0);
+	sz = lScore->getContentSize() * lScore->getScale();
+	lScore->setPosition(0, -sz.height / 2.0f);
+
+	aScore->setString(std::to_string(average).substr(0, std::to_string(average).find('.') + 2));
+	setNodeInRect(aScore, size * 0.3f, 0);
+	sz = aScore->getContentSize() * aScore->getScale();
+	aScore->setPosition(0, -sz.height / 2.0f);
+}
+
+void cProfile::hide()
+{
+	if (this->isVisible())
+	{
+		this->setVisible(false);
+		updateStats();
+	}
+}
+void cProfile::show()
+{
+	this->setVisible(true);
+}

@@ -17,7 +17,7 @@ cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlay
 	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     
 	auto gTtfConfig = userDefault->font;
-    
+
 	float indent = visibleSize.height / 70.0f;
 	float halfindent = indent / 2.0f;
 

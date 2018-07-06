@@ -55,11 +55,12 @@ public:
 	cBaseMode *activeMode;
 	cocos2d::TTFConfig *font, *fontHd;
 
+	bool first_start;
+
 	void saveProfile();
-
 	void saveModes();
-
 	void saveCards();
+
 	static cUserDefault* getInstance();
 	~cUserDefault();
 

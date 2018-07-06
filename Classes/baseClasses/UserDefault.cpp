@@ -4,6 +4,7 @@ cUserDefault *cUserDefault::pInstance = nullptr;
 
 cUserDefault::cUserDefault()
 {
+	first_start = false;
 	nlohmann::json wow;
 	std::string data = cocos2d::FileUtils::getInstance()->getStringFromFile("config/profile.json").c_str();
 	wow = nlohmann::json::parse(data);
@@ -236,7 +237,12 @@ void cUserDefault::loadProfile()
 	auto pt = cocos2d::FileUtils::getInstance()->getWritablePath();
 	std::string file = cocos2d::FileUtils::getInstance()->getStringFromFile(cocos2d::FileUtils::getInstance()->getWritablePath() + "profile.json");
 	if (!file.empty())profile = nlohmann::json::parse(file);
-	else profile = nlohmann::json::parse("{\"sName\": \"\", \"sAvatarName\" : \"\", \"bSound\" : false,\"bSex\" : true,\"bTutorial\" : false,\"fAverageScore\" : 0.0,\"fBestScore\" : 0.0,\"fLastScore\" : 0.0,\"aLevel\" : [1, 1, 1, 1], \"aStats\": [1,1,1,1,1,1,1,1], \"sDifficulty\": \"[1,1]|[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]\", \"aOpenCards\" : [], \"aActiveCards\" : []}");
+	else
+	{
+		profile = nlohmann::json::parse("{\"sName\": \"\", \"sAvatarName\" : \"\", \"bSound\" : false,\"bSex\" : true,\"bTutorial\" : false,\"fAverageScore\" : 0.0,\"fBestScore\" : 0.0,\"fLastScore\" : 0.0,\"aLevel\" : [1, 1, 1, 1], \"aStats\": [1,1,1,1,1,1,1,1], \"sDifficulty\": \"[1,1]|[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]\", \"aOpenCards\" : [], \"aActiveCards\" : []}");
+		first_start = true;
+	}
+
 }
 void cUserDefault::saveProfile()
 {

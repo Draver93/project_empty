@@ -11,7 +11,7 @@ cMenuScene::~cMenuScene()
 cocos2d::Scene* cMenuScene::bs_create()
 {
 	int f = cocos2d::Director::getInstance()->getEventDispatcher()->getReferenceCount();
-
+	prof = nullptr;
 	cocos2d::Scene *pScene = cocos2d::Scene::create();
 
 	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
@@ -101,10 +101,9 @@ cocos2d::Scene* cMenuScene::bs_create()
 	}
 	
 	
-	cocos2d::Rect mdlWndRect;
 	//middle bar
 	{
-		cWindow *bgWnd = new cWindow(cocos2d::Size(visibleSize.width - indent * 2.0f, mdlBarH), W_MUTE, 0);
+		bgWnd = new cWindow(cocos2d::Size(visibleSize.width - indent * 2.0f, mdlBarH), W_MUTE, 0);
 		bgWnd->setWColor(cocos2d::Color3B(0, 0, 0));
 		bgWnd->setOpacity(100);
 		bgWnd->setPosition(center.x, indent * 2.0f + btmBarH + mdlBarH / 2.0f);
@@ -112,11 +111,18 @@ cocos2d::Scene* cMenuScene::bs_create()
 		mdlWndRect = cocos2d::utils::getCascadeBoundingBox(bgWnd);
 		pScene->addChild(bgWnd);
 
-		cProfile *pr = new cProfile(mdlWndRect.size);
-		pr->setLocalZOrder(55);
-		bgWnd->addChild(pr);
-		subMenu["profile"] = pr;
-
+		if (userDefault->first_start == true)
+		{		
+			prof = new cCreateProfileDialog();
+			pScene->addChild(prof);
+		}
+		else
+		{
+			cProfile *pr = new cProfile(mdlWndRect.size);
+			pr->setLocalZOrder(55);
+			bgWnd->addChild(pr);
+			subMenu["profile"] = pr;
+		}
 		cCalendar *cal = new cCalendar(mdlWndRect.size);
 		cal->setLocalZOrder(55);
 		bgWnd->addChild(cal);
@@ -189,8 +195,11 @@ cocos2d::Scene* cMenuScene::bs_create()
 		((cButton*)pScene->getChildByTag(4))->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
 		{
 			for (auto it : subMenu)  it.second->hide();
-			subMenu.at("profile")->show();
-			wndName->setString(u8"Профиль");
+			if (subMenu.at("profile") != nullptr)
+			{
+				subMenu.at("profile")->show();
+				wndName->setString(u8"Профиль");
+			}
 
 			return true;
 		};
@@ -222,11 +231,6 @@ cocos2d::Scene* cMenuScene::bs_create()
 		((cButton*)pScene->getChildByTag(4))->addChild(icon_4);
 	}
 	
-	if (((cProfile*)subMenu.at("profile"))->firstStart == true)
-	{
-		cCreateProfileDialog *prof = new cCreateProfileDialog();
-		pScene->addChild(prof);
-	}
 	return pScene;
 }
 
@@ -234,6 +238,15 @@ cocos2d::Scene* cMenuScene::bs_create()
 
 void cMenuScene::update(float dt)
 {
+	if(prof != nullptr)
+		if (subMenu["profile"] == nullptr && prof->complete == true)
+		{
+			cProfile *pr = new cProfile(mdlWndRect.size);
+			pr->setLocalZOrder(55);
+			bgWnd->addChild(pr);
+			subMenu["profile"] = pr;
+			prof->removeFromParent();
+		}
 	//cUserDefault *userDef = cUserDefault::getInstance();
 	//userDef->updateCurrentModes();
 	//userDef->activeMode = userDef->modes.at(0);
