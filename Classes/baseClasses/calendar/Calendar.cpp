@@ -66,10 +66,44 @@ void cCalendar::updateList()
 		}
 		//
 
-		((cocos2d::Label*)wnds.at(i)->wnd->getChildByName("day"))->setString(list.at(first + i).day);
-		setNodeInRect(wnds.at(i)->wnd->getChildByName("day"), daySz, 0);
-		((cocos2d::Label*)wnds.at(i)->wnd->getChildByName("date"))->setString(list.at(first + i).date);
-		setNodeInRect(wnds.at(i)->wnd->getChildByName("date"), dateSz, 0);
+		wnds.at(i)->day->setString(list.at(first + i).day);
+		setNodeInRect(wnds.at(i)->day, daySz, 0);
+		wnds.at(i)->date->setString(list.at(first + i).date);
+		setNodeInRect(wnds.at(i)->date, dateSz, 0);
+
+		if (list.at(first + i).mark == -1)
+		{
+			wnds.at(i)->label->setString(u8"?????????");
+			setNodeInRect(wnds.at(i)->label, textSize, 0);
+			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(150, 150, 150));
+
+			continue;
+		}
+
+		wnds.at(i)->label->setString(list.at(first + i).text);
+		setNodeInRect(wnds.at(i)->label, textSize, 0);
+
+		int mk = list.at(first + i).mark;
+		if (mk == 5 || mk == 1)
+		{
+			//green
+			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(35, 110, 35));
+		}
+		else if (mk == 4)
+		{
+			//lite green
+			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(100, 190, 21));
+		}
+		else if (mk == 3)
+		{
+			// orange
+			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(250, 190, 50));
+		}
+		else if (mk == 2 || mk == 0)
+		{
+			// red
+			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(230, 70, 10));
+		}
 	}
 }
 
@@ -86,7 +120,7 @@ cCalendar::cCalendar(cocos2d::Size dSize)
 	auto gTtfConfig = userDefault->font;
 	elemSize = cocos2d::Size{ dSize.width * 0.8f, visibleSize.height / 12.0f };
 	indent = elemSize.height * 0.4f;
-
+	auto history = userDefault->history;
 	for (unsigned int scId = 0; scId < userDefault->schools.size(); scId++)
 	{
 		sSchool sc = userDefault->schools.at(scId);
@@ -101,6 +135,16 @@ cCalendar::cCalendar(cocos2d::Size dSize)
 					dayLevel el;
 					el.date = std::to_string(scId + 1) + ":" + std::to_string(clId + 1) + ":" + std::to_string(semId + 1);
 					el.day = std::to_string(dayId + 1);
+
+					std::string key = std::to_string(scId + 1) + "|" + std::to_string(clId + 1) + "|" + std::to_string(semId + 1) + "|" + std::to_string(dayId + 1);
+					el.mark;
+					if (history[key] != nullptr)
+					{
+						std::string val = history[key];
+						auto data = Split(val, '|');
+						el.text = u8"" + data[0];
+						el.mark = std::stoi(data[1]);
+					}
 					list.push_back(el);
 				}
 			}
@@ -123,32 +167,33 @@ cCalendar::cCalendar(cocos2d::Size dSize)
 
 		float locIndent = elemSize.height * 0.05f;
 		cocos2d::Size sz = { elemSize.width * 0.2f , elemSize.height - locIndent * 4.0f };
-		cWindow *markerWnd = new cWindow(sz, W_MUTE, 10);
-		el->wnd->addChild(markerWnd);
-		markerWnd->setPosition(el->originSize.width / 2.0f - locIndent * 2.0f - sz.width / 2.0f, 0);
-		markerWnd->setWColor(cocos2d::Color3B(150, 150, 150));
+		el->markerWnd = new cWindow(sz, W_MUTE, 10);
+		el->wnd->addChild(el->markerWnd);
+		el->markerWnd->setPosition(el->originSize.width / 2.0f - locIndent * 2.0f - sz.width / 2.0f, 0);
+		el->markerWnd->setWColor(cocos2d::Color3B(150, 150, 150));
 
-		cocos2d::Label *label = cocos2d::Label::createWithTTF(*gTtfConfig, "?????????", cocos2d::TextHAlignment::CENTER);
-		setNodeInRect(label, cocos2d::Size(elemSize.width * 0.4f, elemSize.height * 0.7f), 0);
-		label->setName("text");
-		label->setColor(cocos2d::Color3B(150, 150, 150));
-		el->wnd->addChild(label);
+		textSize = cocos2d::Size(elemSize.width * 0.4f, elemSize.height * 0.7f);
+		el->label = cocos2d::Label::createWithTTF(*gTtfConfig, "?????????", cocos2d::TextHAlignment::CENTER);
+		setNodeInRect(el->label, textSize, 0);
+		el->label->setName("text");
+		el->label->setColor(cocos2d::Color3B(150, 150, 150));
+		el->wnd->addChild(el->label);
 
 		daySz = cocos2d::Size(elemSize.height - locIndent * 2.0f, (elemSize.height - locIndent * 3.0f) * 0.8f);
-		cocos2d::Label *day = cocos2d::Label::createWithTTF(*gTtfConfig, "2", cocos2d::TextHAlignment::CENTER);
-		day->setColor(cocos2d::Color3B(96, 139, 171));
-		day->setName("day");
-		setNodeInRect(day, daySz, 0);
-		el->wnd->addChild(day);
-		day->setPosition(-el->originSize.width / 2.0f + locIndent + daySz.width / 2.0f, el->originSize.height / 2.0f - locIndent - daySz.height / 2.0f);
+		el->day = cocos2d::Label::createWithTTF(*gTtfConfig, "?", cocos2d::TextHAlignment::CENTER);
+		el->day->setColor(cocos2d::Color3B(96, 139, 171));
+		el->day->setName("day");
+		setNodeInRect(el->day, daySz, 0);
+		el->wnd->addChild(el->day);
+		el->day->setPosition(-el->originSize.width / 2.0f + locIndent + daySz.width / 2.0f, el->originSize.height / 2.0f - locIndent - daySz.height / 2.0f);
 
 		dateSz = cocos2d::Size(daySz.width * 1.5f, (elemSize.height - locIndent * 3.0f) * 0.2f);
-		cocos2d::Label *date = cocos2d::Label::createWithTTF(*gTtfConfig, "2:12:4", cocos2d::TextHAlignment::CENTER);
-		date->setColor(cocos2d::Color3B(96, 139, 171));
-		date->setName("date");
-		setNodeInRect(date, dateSz, 0);
-		el->wnd->addChild(date);
-		date->setPosition(-el->originSize.width / 2.0f + locIndent + daySz.width / 2.0f, day->getPosition().y - daySz.height /2.0f - locIndent / 2.0f - dateSz.height / 2.0f);
+		el->date = cocos2d::Label::createWithTTF(*gTtfConfig, "?????", cocos2d::TextHAlignment::CENTER);
+		el->date->setColor(cocos2d::Color3B(96, 139, 171));
+		el->date->setName("date");
+		setNodeInRect(el->date, dateSz, 0);
+		el->wnd->addChild(el->date);
+		el->date->setPosition(-el->originSize.width / 2.0f + locIndent + daySz.width / 2.0f, el->day->getPosition().y - daySz.height /2.0f - locIndent / 2.0f - dateSz.height / 2.0f);
 
 	}
 

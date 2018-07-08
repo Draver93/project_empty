@@ -42,7 +42,7 @@ std::string cSMCard::generateMode(std::string modeName)
 	std::vector<int> groupLevel = { sh , cl ,sem, day };
 
 	std::string gameName = std::to_string(sh) + "|" + std::to_string(cl) + "|" + std::to_string(sem) + "|" + std::to_string(day) + "|" + modeName;
-	if (!userDefault->generatedModes[gameName].is_null())
+	if (userDefault->generatedModes[gameName] != nullptr)
 		return userDefault->generatedModes[gameName];
 
 

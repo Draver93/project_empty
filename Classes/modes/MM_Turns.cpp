@@ -17,6 +17,7 @@ cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlay
 	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     
 	auto gTtfConfig = userDefault->font;
+	auto gTtfConfigHd = userDefault->fontHd;
 
 	float indent = visibleSize.height / 70.0f;
 	float halfindent = indent / 2.0f;
@@ -52,176 +53,66 @@ cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlay
 	infoField->setWColor(cocos2d::Color3B(0, 0, 0));
 	infoField->setCascadeOpacityEnabled(false);
 	auto ch = infoField->getChildren();
-	for (auto it : ch) it->setOpacity(100);
+	for (auto it : ch) it->setOpacity(0);
 	this->addChild(infoField);
-
-	cocos2d::ClippingNode *scissors = cocos2d::ClippingNode::create();
-	scissors->setStencil(infoField);	//set the cut triangle in the ClippingNode.
-	scissors->setInverted(false);
-	this->addChild(scissors);
-
-	cocos2d::Size lnSize = { (ifSize.width - indent * 2.0f - halfindent) * 0.25f, ifSize.height / 11.0f };
-	cocos2d::Size lbSize = { (ifSize.width - indent * 2.0f - halfindent) * 0.75f, lnSize.height };
-	cWindow *progressLabelBg, *turnLabelBg;
-
-	//progress bar
-	{
-		progressLabelBg = new cWindow(lnSize, W_MUTE, 0);
-		progressLabelBg->setPosition(-ifSize.width / 2.0f + lnSize.width / 2.0f + indent, ifSize.height / 2.0f - indent - lnSize.height / 2.0f);
-		progressLabelBg->setWColor(cocos2d::Color3B(0, 0, 0));
-		progressLabelBg->setCascadeOpacityEnabled(false);
-		auto ch = progressLabelBg->getChildren();
-		for (auto it : ch) it->setOpacity(100);
-
-		infoField->addChild(progressLabelBg);
-
-		progressBarBg = new cWindow(lbSize, W_MUTE, 0);
-		progressBarBg->setPosition(progressLabelBg->getPosition().x + halfindent + lbSize.width / 2.0f + lnSize.width / 2.0f, progressLabelBg->getPosition().y);
-		progressBarBg->setWColor(cocos2d::Color3B(0, 0, 0));
-		progressBarBg->setOpacity(100);
-		infoField->addChild(progressBarBg);
-
-		progressBarFill = new cWindow(lbSize, W_MUTE, 0);
-		progressBarFill->setWColor(cocos2d::Color3B(70, 200, 70));
-		progressBarFill->setCascadeOpacityEnabled(false);
-		ch = progressBarFill->getChildren();
-		for (auto it : ch) it->setOpacity(200);
-		progressBarFill->setWSize(cocos2d::Size(progressBarFill->getWSize().width / 4.0f, progressBarFill->getWSize().height));
-		progressBarBg->addChild(progressBarFill);
-
-		cocos2d::Label *scoreLabel = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Счет", cocos2d::TextHAlignment::CENTER);
-		setNodeSize(scoreLabel, lnSize.height * 0.6f, true, false);
-		progressLabelBg->addChild(scoreLabel);
-
-		lMaxScore = cocos2d::Label::createWithTTF(*gTtfConfig, std::to_string(goal).substr(0, std::to_string(goal).find('.') + 2), cocos2d::TextHAlignment::CENTER);
-		setNodeSize(lMaxScore, lbSize.height * 0.6f, true, false);
-		cocos2d::Size scLabelSize = lMaxScore->getContentSize() * lMaxScore->getScale();
-		lMaxScore->setPosition(lbSize.width / 2.0f - scLabelSize.width / 2.0f - lbSize.height * 0.3f, 0);
-		progressBarBg->addChild(lMaxScore);
-
-		lCurrentScore = cocos2d::Label::createWithTTF(*gTtfConfig, std::to_string(0), cocos2d::TextHAlignment::CENTER);
-		setNodeSize(lCurrentScore, lbSize.height * 0.6f, true, false);
-		cocos2d::Size scCrrLabelSize = lCurrentScore->getContentSize() * lCurrentScore->getScale();
-		lCurrentScore->setPosition(lbSize.width / 2.0f - scCrrLabelSize.width / 2.0f - lbSize.height * 0.3f, 0);
-		progressBarFill->addChild(lCurrentScore);
-	}
-	//turn bar
-	{
-		turnLabelBg = new cWindow(lnSize, W_MUTE, 0);
-		turnLabelBg->setCascadeOpacityEnabled(false);
-		turnLabelBg->setWColor(cocos2d::Color3B(0, 0, 0));
-		auto ch = turnLabelBg->getChildren();
-		for (auto it : ch) it->setOpacity(100);
-		turnLabelBg->setPosition(progressLabelBg->getPosition().x, progressLabelBg->getPosition().y - halfindent - lnSize.height);
-		infoField->addChild(turnLabelBg);
-
-		turnBarBg = new cWindow(lbSize, W_MUTE, 0);
-		turnBarBg->setPosition(turnLabelBg->getPosition().x + halfindent + lbSize.width / 2.0f + lnSize.width / 2.0f, turnLabelBg->getPosition().y);
-		turnBarBg->setWColor(cocos2d::Color3B(0, 0, 0));
-		turnBarBg->setOpacity(100);
-		infoField->addChild(turnBarBg);
-
-		turnBarFill = new cWindow(lbSize, W_MUTE, 0);
-		turnBarFill->setCascadeOpacityEnabled(false);
-		ch = turnBarFill->getChildren();
-		for (auto it : ch) it->setOpacity(200);
-		turnBarFill->setWColor(cocos2d::Color3B(247, 116, 98));
-		turnBarFill->setWSize(cocos2d::Size(turnBarFill->getWSize().width / 2.0f, turnBarFill->getWSize().height));
-		turnBarBg->addChild(turnBarFill);
-
-		cocos2d::Label *turnLabel = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Ходы", cocos2d::TextHAlignment::CENTER);
-		setNodeSize(turnLabel, lnSize.height * 0.6f, true, false);
-		turnLabelBg->addChild(turnLabel);
-
-		lMaxTurns = cocos2d::Label::createWithTTF(*gTtfConfig, std::to_string(turnCount), cocos2d::TextHAlignment::CENTER);
-		setNodeSize(lMaxTurns, lnSize.height * 0.6f, true, false);
-		cocos2d::Size trLabelSize = lMaxTurns->getContentSize() * lMaxTurns->getScale();
-		lMaxTurns->setPosition(lbSize.width / 2.0f - trLabelSize.width / 2.0f - lbSize.height * 0.3f, 0);
-		turnBarBg->addChild(lMaxTurns);
-
-		lCurrentTurns = cocos2d::Label::createWithTTF(*gTtfConfig, std::to_string(0), cocos2d::TextHAlignment::CENTER);
-		setNodeSize(lCurrentTurns, lbSize.height * 0.6f, true, false);
-		cocos2d::Size scCrrLabelSize = lCurrentTurns->getContentSize() * lCurrentTurns->getScale();
-		lCurrentTurns->setPosition(lbSize.width / 2.0f - scCrrLabelSize.width / 2.0f - lbSize.height * 0.3f, 0);
-		turnBarFill->addChild(lCurrentTurns);
-	}
-
-	cocos2d::Size cardFieldSize = { ifSize.width - indent * 2.0f, ifSize.height - lnSize.height * 2.0f - indent * 3.0f};
-	cocos2d::Size sideWndSize = { (cardFieldSize.width - indent) * 0.3f , cardFieldSize.height };
-	cocos2d::Size mdlWndSize = { (cardFieldSize.width - indent) * 0.4f , cardFieldSize.height };
-
-	cardField = new cWindow(mdlWndSize, W_MUTE, 0);
-	cardField->setPosition(0, ifSize.height / 2.0f - mdlWndSize.height / 2.0f - lnSize.height * 2.0f - indent * 2.0f);
-	cardField->setWColor(cocos2d::Color3B(0, 0, 0));
-	ch = cardField->getChildren();
-	for (auto it : ch) it->setOpacity(100);
-	infoField->addChild(cardField);
-
-	cWindow* lField = new cWindow(sideWndSize, W_MUTE, 0);
-	lField->setPosition(-mdlWndSize.width / 2.0f - sideWndSize.width / 2.0f - halfindent, cardField->getPosition().y);
-	lField->setWColor(cocos2d::Color3B(0, 0, 0));
-	ch = lField->getChildren();
-	for (auto it : ch) it->setOpacity(100);
-	lField->setCascadeOpacityEnabled(false);
-	infoField->addChild(lField);
-
-	cWindow* rField = new cWindow(sideWndSize, W_MUTE, 0);
-	rField->setPosition(mdlWndSize.width / 2.0f + sideWndSize.width / 2.0f + halfindent, cardField->getPosition().y);
-	rField->setWColor(cocos2d::Color3B(0, 0, 0));
-	ch = rField->getChildren();
-	for (auto it : ch) it->setOpacity(100);
-	rField->setCascadeOpacityEnabled(false);
-	infoField->addChild(rField);
-
-	//cards
-	{
-		auto dActiveCards = userDefault->profile["aActiveCards"];
-		for (int i = 0; i < dActiveCards.size(); i++)
-		{
-			for (int j = 0; j < userDefault->cards.size(); j++)
-			{
-				if (dActiveCards.at(i) == userDefault->cards.at(j)->id)
-				{
-					sCards.push_back((cStudentCard*)userDefault->cards.at(j));
-				}
-			}
-		}
-		float cardWdth = (ifSize.height * 0.25f) / (88.8 / 63.5f);
-		int line = 0;
-		for (int i = 0; i < sCards.size(); i++)
-		{
-			cocos2d::Node* node = sCards.at(i)->getCard(gTtfConfig, 1, cardWdth);
-			
-			cocos2d::Size cardSize = cocos2d::utils::getCascadeBoundingBox(node).size;
-
-			int side = 1;
-			if (i % 2 != 0) side = -1;
-			if (i - line > 1)line = 1;
-			node->setRotation(20);
-			node->setPosition(0, ((cardSize.height / 4.0f) + (cardSize.height / 2.0f) * line) * side );
-			node->setLocalZOrder(5 +((line + 1) * side));
-			node->setOpacity(200);
-			lField->addChild(node);
-			sCardNodes.push_back(node);
-		}
-
-		tNode = tCard->getCard(gTtfConfig, 1, cardWdth);
-		cocos2d::Size cardSize = cocos2d::utils::getCascadeBoundingBox(tNode).size;
-		setNodeSize(tNode, cardWdth * 1.5f, true, true);
-		cardSize = cocos2d::utils::getCascadeBoundingBox(tNode).size / 1.5f;
-		tNode->setRotation(-20);
-
-		tNode->setOpacity(200);
-		rField->addChild(tNode);
-	}
 	
-	{	
-		infoTable = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Ходы", cocos2d::TextHAlignment::CENTER);
-		setNodeInRect(infoTable, mdlWndSize, mdlWndSize.width * 0.1f);
-		infoTable->setOpacity(50);
-		cardField->addChild(infoTable);
+
+	cocos2d::Size sbSize = { ifSize.height * 0.7f, ifSize.height * 0.7f};
+	cocos2d::Sprite *scoreBar = cocos2d::Sprite::create("icons/element.png");
+	scoreBar->setColor(cocos2d::Color3B(0, 0, 0));
+	scoreBar->setOpacity(100);
+	scoreBar->setContentSize(sbSize);
+
+	feScore.node = new cBaseNode();
+	infoField->addChild(feScore.node);
+	feScore.node->addChild(scoreBar);
+	feScore.originPos = { 0, 0 };
+
+
+
+	tbSize = cocos2d::Size{ sbSize * 0.4f };
+	cocos2d::Sprite *turnBar = cocos2d::Sprite::create("icons/element.png");
+	turnBar->setColor(cocos2d::Color3B(0, 0, 0));
+	turnBar->setOpacity(100);
+	turnBar->setContentSize(tbSize);
+
+	feTurn.node = new cBaseNode();
+	infoField->addChild(feTurn.node);
+	feTurn.node->addChild(turnBar);
+	feTurn.originPos = { -sbSize.width /2.0f - tbSize.width /2.0f, sbSize.height / 2.0f - tbSize.height / 2.0f };
+
+	{
+		bgScoreSize = cocos2d::Size{ sbSize.width * 1.5f, sbSize.height * 0.4f };
+		scoreLabel = cocos2d::Label::createWithTTF(*gTtfConfigHd, "000", cocos2d::TextHAlignment::CENTER);
+		scoreLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.58f));
+		setNodeInRect(scoreLabel, bgScoreSize * 0.8f, 0);
+		scoreLabel->setColor(cocos2d::Color3B(230, 230, 230));
+		scoreLabel->setPosition(sbSize / 2.0f);
+		scoreBar->addChild(scoreLabel);
+
+		turnLabel = cocos2d::Label::createWithTTF(*gTtfConfigHd, "25", cocos2d::TextHAlignment::CENTER);
+		turnLabel->setAnchorPoint(cocos2d::Vec2(0.5f, 0.58f));
+		setNodeInRect(turnLabel, tbSize * 0.6f, 0);
+		turnLabel->setColor(cocos2d::Color3B(230, 230, 230));
+		turnLabel->setPosition(tbSize / 2.0f);
+		turnBar->addChild(turnLabel);
 	}
 
+	{
+		cocos2d::Label *scoreDesc = cocos2d::Label::createWithTTF(*gTtfConfigHd, u8"Игровой счет", cocos2d::TextHAlignment::CENTER);
+		scoreDesc->setAnchorPoint(cocos2d::Vec2(0.5f, 1.0f));
+		scoreDesc->setColor(cocos2d::Color3B(230, 230, 230));
+		setNodeInRect(scoreDesc, cocos2d::Size(bgScoreSize.width * 2.2f, bgScoreSize.height * 0.3f), 0);
+		scoreDesc->setPosition(sbSize.width / 2.0f, 0);
+		scoreBar->addChild(scoreDesc);
+
+		cocos2d::Label *turnDesc = cocos2d::Label::createWithTTF(*gTtfConfigHd, u8"Ходы", cocos2d::TextHAlignment::CENTER);
+		turnDesc->setAnchorPoint(cocos2d::Vec2(0.5f, 1.0f));
+		turnDesc->setColor(cocos2d::Color3B(230, 230, 230));
+		setNodeInRect(turnDesc, cocos2d::Size(tbSize.width * 2.2f, tbSize.height * 0.3f), 0);
+		turnDesc->setPosition(tbSize.width / 2.0f, 0);
+		turnBar->addChild(turnDesc);
+	}
 	updateInfoBar();
 }
 cMMTurnsGameNode::~cMMTurnsGameNode()
@@ -254,9 +145,13 @@ void cMMTurnsGameNode::step(float dt)
 	infoTable->setVisible(tableArray.empty());*/
 
 	cUserDefault *userDefault = cUserDefault::getInstance();
+	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	//АПАСНА
 	((cMMTurns*)userDefault->activeMode)->turns = turns;
-	((cMMTurns*)userDefault->activeMode)->currentScore = currentScore;
+	((cMMTurns*)userDefault->activeMode)->currentScore = currentScore.get();
+
+	feTurn.update(dt, tbSize.width / 10.0f);
+	feScore.update(dt, bgScoreSize.width / 20.0f);
 
 }
 void cMMTurnsGameNode::reset()
@@ -287,40 +182,19 @@ void cMMTurnsGameNode::addInTable(std::string text)
 }
 void cMMTurnsGameNode::updateInfoBar()
 {
-	//bars update
-	{
-		float procScore = currentScore / goal * 100.0f;
-		if (procScore > 100.0f)procScore = 100.0f;
-		auto sbSize = progressBarBg->getWSize();
-		sbSize.width = sbSize.width / 100.0f * procScore;
-		progressBarFill->setWSize(sbSize);
-		progressBarFill->setPosition(-progressBarBg->getWSize().width / 2.0f + progressBarFill->getWSize().width / 2.0f, 0);
-		lMaxScore->setOpacity(255 - 255.0f / 100.0f * procScore);
-		lCurrentScore->setString(std::to_string(currentScore).substr(0, std::to_string(currentScore).find('.') + 2));
-
-		setNodeInRect(lCurrentScore, progressBarFill->getWSize(), progressBarFill->getWSize().height * 0.6f);
-		cocos2d::Size scCrrLabelSize = lCurrentScore->getContentSize() * lCurrentScore->getScale();
-		scCrrLabelSize = lCurrentScore->getContentSize() * lCurrentScore->getScale();
-		lCurrentScore->setPosition(progressBarFill->getWSize().width / 2.0f - scCrrLabelSize.width / 2.0f - progressBarFill->getWSize().height * 0.3f, 0);
-
-		float procTurns = float(turnCount - turns) / (float)turnCount * 100.0f;
-		if (procTurns < 0) procTurns = 0;
-		sbSize = turnBarBg->getWSize();
-		sbSize.width = (sbSize.width / 100.0f) * procTurns;
-		lMaxTurns->setOpacity(255 - 255.0f / 100.0f * procTurns);
-		turnBarFill->setWSize(sbSize);
-		turnBarFill->setPosition(-turnBarBg->getWSize().width / 2.0f + turnBarFill->getWSize().width / 2.0f, 0);
-		lCurrentTurns->setString(std::to_string(int(turnCount - turns > 0 ? turnCount - turns : 0)));
-
-		setNodeInRect(lCurrentTurns, turnBarFill->getWSize(), turnBarFill->getWSize().height * 0.6f);
-		scCrrLabelSize = lCurrentTurns->getContentSize() * lCurrentTurns->getScale();
-		lCurrentTurns->setPosition(turnBarFill->getWSize().width / 2.0f - scCrrLabelSize.width / 2.0f - turnBarFill->getWSize().height * 0.3f, 0);
-	}
-
-
+	scoreLabel->setString(std::to_string(currentScore.get()).substr(0, std::to_string(currentScore.get()).find('.') + 2));
+	setNodeInRect(scoreLabel, bgScoreSize * 0.8f, 0);
+	turnLabel->setString(std::to_string(int(turnCount - turns > 0 ? turnCount - turns : 0)));
+	setNodeInRect(turnLabel, tbSize * 0.6f, 0);
 }
 void cMMTurnsGameNode::updateGameStats(float dt)
 {
+	currentScore.update(dt);
+	if (currentScore.isProgress())
+	{
+		updateInfoBar();
+		checkGameFinish();
+	}
 	//Расчет результата
 	if (field->getTurnCount() != turns)
 	{
@@ -348,11 +222,16 @@ void cMMTurnsGameNode::updateGameStats(float dt)
 
 		//addInTable( std::to_string(result).substr(0, std::to_string(result).find('.') + 2));
 
-		currentScore += result;
+		if(!currentScore.isProgress())
+			currentScore.set(currentScore.get() + result, 3, true);
+		else
+		{
+			float point = currentScore.get_nVal();
+			currentScore.set(currentScore.get());
+			currentScore.set(point + result, 3, true);
+		}
 		turns = field->getTurnCount();
 
-		updateInfoBar();
-		checkGameFinish();
 	}
 	//Подсветка карт
 	for (auto it : sCards)
@@ -368,12 +247,12 @@ void cMMTurnsGameNode::updateGameStats(float dt)
 }
 void cMMTurnsGameNode::checkGameFinish()
 {
-	if (turns >= turnCount || currentScore >= goal)
+	if (turns >= turnCount || currentScore.get() >= goal)
 	{
+		currentScore.set(currentScore.get_nVal());
 		cUserDefault *userDefault = cUserDefault::getInstance();
-		((cMMTurns*)userDefault->activeMode)->currentScore = currentScore;
+		((cMMTurns*)userDefault->activeMode)->currentScore = currentScore.get();
 		((cMMTurns*)userDefault->activeMode)->turns = turns;
-
 		cEndDialog *endDialog = new cEndDialog();
 		this->addChild(endDialog);
 	
@@ -417,7 +296,7 @@ cMMTurnsIntroNode::cMMTurnsIntroNode(cocos2d::Size size, cBaseMode *thisMode)
 
 	//width / 6
 	cWindow* infoBg = nullptr;
-	cocos2d::Size szIBG = { visibleSize.width * 0.8f,  visibleSize.height * 0.7f };
+	cocos2d::Size szIBG = { (visibleSize.height * 0.7f) * 0.7f,  visibleSize.height * 0.7f };
 	{
 		infoBg = new cWindow(szIBG, W_MUTE, 10);
 		infoBg->setPosition(visibleSize / 2.0f);
@@ -678,28 +557,42 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 
 	float topInterface = visibleSize.height / 20.0f,
 		  btmInterface = visibleSize.width / 2.5f / 3.0f,
-		  mdlInterface = (visibleSize.height - topInterface - btmInterface - (4 * indent)) * 0.6f;
+		  mdlInterface = visibleSize.height * 0.7f;
 
 
 	float proc = currentScore / (goal / 100.0f);
 	std::string resultMark = u8"Неуд.";
+	mark = 2;
 
-	if (proc >= 100.0f) resultMark = u8"Отл.";
-	else if (proc >= 75.0f) resultMark = u8"Хор.";
-	else if (proc >= 50.0f) resultMark = u8"Удв.";
-	
+	if (proc >= 100.0f)
+	{
+		resultMark = u8"Отл.";
+		mark = 5;
+	}
+	else if (proc >= 75.0f)
+	{
+		resultMark = u8"Хор.";
+		mark = 4;
+	}
+	else if (proc >= 50.0f)
+	{
+		resultMark = u8"Удв.";
+		mark = 3;
+	}
+
+	cocos2d::Size szResultWnd = { mdlInterface * 0.7f, mdlInterface };
+	cWindow* resultWnd = new cWindow(szResultWnd, W_MUTE, 10);
 	//Победа порожение 
 	{
-		cocos2d::Size szResultWnd = { visibleSize.width - indent * 4.0f, mdlInterface };
 
-		cWindow* resultWnd = new cWindow(szResultWnd, W_MUTE, 10);
 		resultWnd->setCascadeOpacityEnabled(false);
+		resultWnd->setWColor(cocos2d::Color3B(255, 255, 255));
 		auto ch = resultWnd->getChildren();
-		for (auto it : ch) it->setOpacity(100);
+		for (auto it : ch) it->setOpacity(150);
 		this->addChild(resultWnd);
 		
 		cWindow* scoreWnd = nullptr;
-		cocos2d::Size szScoreWnd = { szResultWnd.width - indent * 4.0f, szResultWnd.height / 4.0f };
+		cocos2d::Size szScoreWnd = { szResultWnd.width - indent * 2.0f, szResultWnd.height * 0.15f };
 		{
 			scoreWnd = new cWindow(szScoreWnd, W_MUTE, 10);
 			scoreWnd->setPosition(0, szResultWnd.height / 2.0f - indent * 2.0 - szScoreWnd.height / 2.0f);
@@ -717,16 +610,15 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 			setNodeInRect(titleLabel, sizeTitle, sizeTitle.width * 0.05f);
 			infoTitle->addChild(titleLabel);
 
-			cocos2d::Size barSize = { szScoreWnd.width - indent * 4.0f, szScoreWnd.height - indent * 5.0f };
-			cWindow *bar = new cWindow(barSize, W_MUTE, 0);
-			//bar->setPosition(0, -indent / 2.0f);
+			aBarSize = cocos2d::Size{ szScoreWnd.width - indent * 2.0f, szScoreWnd.height - indent * 4.0f };
+			cWindow *bar = new cWindow(aBarSize, W_MUTE, 0);
+			bar->setPosition(0, aBarSize.height / 2.0f - szScoreWnd.height / 2.0f + indent);
 			bar->setWColor(cocos2d::Color3B(0, 0, 0));
 			bar->setCascadeOpacityEnabled(false);
 			auto ch = bar->getChildren();
 			for (auto it : ch) it->setOpacity(100);
 			scoreWnd->addChild(bar);
 
-			aBarSize = barSize;// cocos2d::Size(barSize.width - barSize.height * 0.2f, barSize.height - barSize.height * 0.2f);
 			scoreBar = new cWindow(aBarSize, W_MUTE, 0);
 			scoreBar->setWColor(cocos2d::Color3B(70, 180, 70));
 			bar->addChild(scoreBar);
@@ -736,7 +628,7 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 				minMark->setRotation(-90);
 				minMark->setColor(cocos2d::Color3B(200, 200, 200));
 
-				cocos2d::Size szArrow = cocos2d::Size(aBarSize.height / 5.0f, aBarSize.height / 5.0f);
+				cocos2d::Size szArrow = cocos2d::Size(indent, indent);
 				setNodeInRect(minMark, szArrow, 0);
 				bar->addChild(minMark);
 
@@ -782,7 +674,7 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 		}
 
 		cWindow* markWnd = nullptr;
-		cocos2d::Size szMarkWnd = { szScoreWnd.width, szResultWnd.height - szScoreWnd.height - indent * 6.0f };
+		cocos2d::Size szMarkWnd = { szScoreWnd.width, szResultWnd.height * 0.5f };
 		{
 			markWnd = new cWindow(szMarkWnd, W_MUTE, 10);
 			markWnd->setPosition(0, scoreWnd->getPosition().y - szScoreWnd.height / 2.0f - indent * 2.0f - szMarkWnd.height / 2.0f);
@@ -822,7 +714,7 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 				markWnd->addChild(nameWnd);
 
 				cocos2d::Label* nLabel = cocos2d::Label::createWithTTF(*gTtfConfig, names.at(i), cocos2d::TextHAlignment::CENTER);
-				setNodeInRect(nLabel, nWndSize, nWndSize.height * 0.2f);
+				setNodeInRect(nLabel, nWndSize * 0.8f, 0);
 				nLabel->setColor(cocos2d::Color3B(200, 200, 200));
 				nameWnd->addChild(nLabel);
 
@@ -834,39 +726,43 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 				nameWnd->addChild(valWnd);
 
 				cocos2d::Label* vLabel = cocos2d::Label::createWithTTF(*gTtfConfig, val.at(i), cocos2d::TextHAlignment::CENTER);
-				setNodeInRect(vLabel, vWndSize, vWndSize.height * 0.2f);
+				setNodeInRect(vLabel, vWndSize * 0.8f, 0);
 				vLabel->setColor(cocos2d::Color3B(200, 200, 200));
 				valWnd->addChild(vLabel);
 
 			}
-
 		}
 	}
 
 	//bottom btns
+	cButton *btnOk = nullptr, *btnCancel = nullptr;
+	cocos2d::Size szBtn = { szResultWnd.width / 3.0f, szResultWnd.width / 3.0f / 3.0f };
 	{
-		cocos2d::Size btnSize = cocos2d::Size(visibleSize.width / 2.5f, visibleSize.width / 2.5f / 3.0f);
-		cButton *exitBtn = new cButton(nullptr, btnSize, 1.05f, -2);
-		this->addChild(exitBtn);
-		exitBtn->wnd->setWColor(cocos2d::Color3B(96, 139, 171));
+		btnOk = new cButton(nullptr, szBtn, 1.03f, -11);
+		btnOk->setPosition((mdlInterface * 0.7f) / 2.0 - indent - szBtn.width / 2.0f, -mdlInterface  / 2.0 + indent + szBtn.height / 2.0f);
+		btnOk->wnd->setWColor(cocos2d::Color3B(96, 139, 171));
+		resultWnd->addChild(btnOk);
 
-		cocos2d::Label* okLabel = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Завершить", cocos2d::TextHAlignment::CENTER);
-		setNodeInRect(okLabel, btnSize, btnSize.height * 0.6f);
-		okLabel->setColor(cocos2d::Color3B(200, 200, 200));
-		exitBtn->addChild(okLabel);
-		exitBtn->btnUp = [&](cocos2d::Touch* touch, cocos2d::Node* node)
+		cocos2d::Label* OkLabel = cocos2d::Label::createWithTTF(*gTtfConfig, u8"Завершить", cocos2d::TextHAlignment::CENTER);
+		OkLabel->setColor(cocos2d::Color3B(200, 200, 200));
+		setNodeInRect(OkLabel, szBtn, szBtn.height * 0.6f);
+		btnOk->addChild(OkLabel);
+
+		btnOk->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
 		{
 			if (turns >= turnCount || currentScore >= goal)
 			{
 			}
 			cUserDefault *userDefault = cUserDefault::getInstance();
-			auto level = userDefault->profile["aLevel"];
+			auto &level = userDefault->profile["aLevel"];
 
 			int sh = level[0] - 1;
 			int cl = level[1] - 1;
 			int sem = level[2] - 1;
 			int day = level[3] - 1;
 
+			std::string key = std::to_string(level[0].get<int>()) + "|" + std::to_string(level[1].get<int>()) + "|" + std::to_string(level[2].get<int>()) + "|" + std::to_string(level[3].get<int>());
+			userDefault->addHistoryElement(key, u8"Экзамен: ходы", mark);
 			while (dayCost > 0)
 			{
 				if (day < int(userDefault->schools.at(sh).classes.at(cl).semesters.at(sem).days.size() - 1)) day++;
@@ -881,7 +777,7 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 							if (sh < int(userDefault->schools.size() - 1)) sh++;
 							else
 							{
-							//Fucking END
+								//Fucking END
 							}
 							cl = 0;
 						}
@@ -896,32 +792,31 @@ cMMTurnsOutroNode::cMMTurnsOutroNode(cocos2d::Size size, int turns, int turnCoun
 			level[1] = cl + 1;
 			level[2] = sem + 1;
 			level[3] = day + 1;
+			userDefault->saveProfile();
+			userDefault->saveHistory();
 
 			cSceneManager *sceneManager = cSceneManager::getInstance();
 			sceneManager->changeScene("menu");
 			return true;
 		};
 
+		btnCancel = new cButton(nullptr, cocos2d::Size(szBtn.height, szBtn.height), 1.03f, -11);
+		btnCancel->setPosition(btnOk->getPosition().x - indent - szBtn.width / 2.0f - szBtn.height / 2.0f, btnOk->getPosition().y);
+		btnCancel->wnd->setWColor(cocos2d::Color3B(96, 139, 171));
+		resultWnd->addChild(btnCancel);
 
-		cocos2d::Size resBtnSize = { btnSize.height, btnSize.height };
-		cButton *restartBtn = new cButton(nullptr, resBtnSize, 1.05f, -2);
-		this->addChild(restartBtn);
-		restartBtn->wnd->setWColor(cocos2d::Color3B(96, 139, 171));
 		cocos2d::Sprite *icon_res = cocos2d::Sprite::create("icons/res.png");
-		setNodeInRect(icon_res, resBtnSize, btnSize.height * 0.2f);
+		setNodeInRect(icon_res, cocos2d::Size(szBtn.height, szBtn.height) * 0.8f, 0);
 		icon_res->setOpacity(150);
 		icon_res->setLocalZOrder(4);
-		restartBtn->addChild(icon_res);
-		restartBtn->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
+		btnCancel->addChild(icon_res);
+
+		btnCancel->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
 		{
 			cSceneManager *sceneManager = cSceneManager::getInstance();
 			sceneManager->changeScene("game");
 			return true;
 		};
-
-		float btnLineSize = btnSize.width + resBtnSize.width + indent;
-		exitBtn->setPosition(btnLineSize / 2.0f - btnSize.width / 2.0f, -(visibleSize.height / 2.0f) + indent * 2.0f + btnSize.height / 2.0f);
-		restartBtn->setPosition(-btnLineSize / 2.0f + resBtnSize.width / 2.0f, -(visibleSize.height / 2.0f) + indent * 2.0f + btnSize.height / 2.0f);
 
 	}
 
@@ -991,7 +886,7 @@ cMMTurns::cMMTurns(std::string modeName)
 	goal = std::stof(strVec.at(2));
 	turnCount = std::stoi(strVec.at(1));
 
-	dayCost = 2;
+	dayCost = 1;
 }
 cMMTurns::~cMMTurns()
 {
@@ -1034,7 +929,7 @@ std::string cMMTurns::generateMode(std::string modeName)
 	std::string gameName = std::to_string(sh) + "|" + std::to_string(cl) + "|" + std::to_string(sem) + "|" + std::to_string(day) + "|" + modeName;
 
 
-	if (userDefault->generatedModes[gameName].is_null())
+	if (userDefault->generatedModes[gameName] != nullptr)
 		return userDefault->generatedModes[gameName];
 
 	///Dinamic skill wrong!!!!!!!!!!!!
@@ -1072,8 +967,8 @@ std::string cMMTurns::generateMode(std::string modeName)
 	//maxScore = minScore + ( maxScore - minScore ) / 2.0f;
 
 	//minScore = maxScore / 2.0f;
-	//maxScore += maxScore / 2.0f;
-	result += std::to_string(int(minScore + (maxScore - minScore) / 6.0f)); //middle
+	maxScore = maxScore * 0.8f; //FOR MY SKILL
+	result += std::to_string( int(minScore + (maxScore - minScore) / 6.0f) ); //middle
 
 
 	std::string data = userDefault->generateCard(subjectVec);

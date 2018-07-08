@@ -15,6 +15,7 @@ cUserDefault::cUserDefault()
 	loadLevels();
 	loadProfile();
 	loadCards();
+	loadHistory();
 
 	if (!cocos2d::FileUtils::getInstance()->isFileExist("stats.json")) createStats();
 	else gameStats = nlohmann::json::parse(cocos2d::FileUtils::getInstance()->getStringFromFile("stats.json").c_str());
@@ -160,7 +161,7 @@ std::string cUserDefault::generateCard(int rare)
 
 	std::string result = name + "|"  + path + "|" + std::to_string(subject) + ":" + std::to_string(statVal) + "|" + std::to_string(rareClass);
 
-	auto students = generatedCards["studentCards"];
+	auto &students = generatedCards["studentCards"];
 	int count = students.size();
 
 	std::string k = "st_" + std::to_string(count + 1);
@@ -218,7 +219,7 @@ std::string cUserDefault::generateCard(std::vector<int> subjects)
 	}
 	int subject = subjects.at(rand() % 4);
 
-	auto teachers = generatedCards["teacherCards"];
+	auto &teachers = generatedCards["teacherCards"];
 	int count = teachers.size();
 
 	std::string result = name + "|" + path + "|" + std::to_string(subject) + ":" + std::to_string(statScale) + "|" + std::to_string(rareClass);
@@ -239,7 +240,8 @@ void cUserDefault::loadProfile()
 	if (!file.empty())profile = nlohmann::json::parse(file);
 	else
 	{
-		profile = nlohmann::json::parse("{\"sName\": \"\", \"sAvatarName\" : \"\", \"bSound\" : false,\"bSex\" : true,\"bTutorial\" : false,\"fAverageScore\" : 0.0,\"fBestScore\" : 0.0,\"fLastScore\" : 0.0,\"aLevel\" : [1, 1, 1, 1], \"aStats\": [1,1,1,1,1,1,1,1], \"sDifficulty\": \"[1,1]|[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]\", \"aOpenCards\" : [], \"aActiveCards\" : []}");
+		profile = nlohmann::json::parse("{\"sName\": \"\", \"sAvatarName\" : \"\", \"bSound\" : false,\"bSex\" : true,\"bTutorial\" : false,\"fAverageScore\" : 0.0,\"fBestScore\" : 0.0,\"fLastScore\" : 0.0,\"aLevel\" : [1, 1, 1, 1], \"aStats\": [0.2,0.5,1.3,0.5,0.1,0.2,0.7,0.3], \"sDifficulty\": \"[1,1]|[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]\", \"aOpenCards\" : [], \"aActiveCards\" : []}");
+		saveProfile();
 		first_start = true;
 	}
 
@@ -288,6 +290,7 @@ void cUserDefault::saveCards()
 	loadCards();
 }
 
+
 void cUserDefault::saveModes()
 {
 	cocos2d::FileUtils::getInstance()->writeStringToFile(generatedModes.dump(), cocos2d::FileUtils::getInstance()->getWritablePath() + "modes.json");
@@ -302,6 +305,31 @@ void cUserDefault::loadModes()
 		saveModes();
 	}
 }
+
+void cUserDefault::addHistoryElement(std::string key, std::string name, int result)
+{
+	//history.erase("one");
+	history[key] = name + "|" + std::to_string(result);
+}
+
+void cUserDefault::saveHistory()
+{
+	cocos2d::FileUtils::getInstance()->writeStringToFile(history.dump(), cocos2d::FileUtils::getInstance()->getWritablePath() + "history.json");
+	loadCards();
+}
+
+void cUserDefault::loadHistory()
+{
+	std::string file = cocos2d::FileUtils::getInstance()->getStringFromFile(cocos2d::FileUtils::getInstance()->getWritablePath() + "history.json");
+	if (!file.empty())history = nlohmann::json::parse(file.c_str());
+	else
+	{
+		history = nlohmann::json::parse("{}");
+		saveHistory();
+	}
+}
+
+
 
 void cUserDefault::loadLevels()
 {

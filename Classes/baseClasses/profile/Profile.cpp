@@ -42,7 +42,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 
 		
 
-		infoElevent *el = new infoElevent();
+		floatElement *el = new floatElement();
 		el->node = new cBaseNode();
 
 		cocos2d::Label *profileName = cocos2d::Label::createWithTTF(*gTtfConfig, nameData, cocos2d::TextHAlignment::CENTER);
@@ -75,7 +75,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 		float best = userDefault->profile["fBestScore"];
 		float last = userDefault->profile["fLastScore"];
 		{
-			infoElevent *el = new infoElevent();
+			floatElement *el = new floatElement();
 			el->node = new cBaseNode();
 
 			aScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(average).substr(0, std::to_string(average).find('.') + 2), cocos2d::TextHAlignment::CENTER);
@@ -101,7 +101,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 		}
 
 		{
-			infoElevent *el = new infoElevent();
+			floatElement *el = new floatElement();
 			el->node = new cBaseNode();
 
 			bScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(best).substr(0, std::to_string(best).find('.') + 5), cocos2d::TextHAlignment::CENTER);
@@ -125,7 +125,7 @@ cProfile::cProfile(cocos2d::Size sizeProfile)
 		}
 
 		{
-			infoElevent *el = new infoElevent();
+			floatElement *el = new floatElement();
 			el->node = new cBaseNode();
 
 			lScore = cocos2d::Label::createWithTTF(*gTtfConfigHd, std::to_string(last).substr(0, std::to_string(last).find('.') + 5), cocos2d::TextHAlignment::CENTER);

@@ -8,17 +8,16 @@
 #include "baseClasses/game/GameField.hpp"
 #include "baseClasses/dialogs/Dialog.hpp"
 #include "cards/Cards.hpp"
-
 class cMMTurnsGameNode : public cDinamicLayer
 {
 private:
 	int dayCost;
 	cGameField *field;
-
+	floatElement feTurn, feScore;
 	float addtime;
 	int turnCount, turns;
 	float goal;
-	float currentScore;
+	cDigit currentScore;
 	int elementCount;
 	std::vector<int> subjects;
 	std::vector<float> playerSkills;
@@ -29,15 +28,8 @@ private:
 	cTeacherCard* tCard;
 	cocos2d::Node* tNode;
 
-	cWindow* progressBarBg;
-	cWindow* progressBarFill;
-	cocos2d::Label *lMaxScore;
-	cocos2d::Label* lMaxTurns;
-	cocos2d::Label *lCurrentScore;
-	cocos2d::Label *lCurrentTurns;
-	cWindow *turnLabelBg;
-	cWindow *turnBarBg;
-	cWindow *turnBarFill;
+	cocos2d::Size bgScoreSize, tbSize;
+	cocos2d::Label *scoreLabel, *turnLabel;
 
 	cWindow *cardField;
 	cocos2d::Label *infoTable;
@@ -72,6 +64,7 @@ public:
 class cMMTurnsOutroNode : public cDinamicLayer
 {
 private:
+	int mark;
 	float cScore, cGoal;
 	int cTurn, cTurnCount;
 

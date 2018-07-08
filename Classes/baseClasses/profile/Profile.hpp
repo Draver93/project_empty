@@ -45,40 +45,7 @@ private:
 	cDigit statVal;
 	cocos2d::Label *statValLabel;
 
-	struct infoElevent {
-		cBaseNode *node;
-		cocos2d::Vec2 originPos;
-		cDigit x, y;
-		cDigit value;
-
-		infoElevent()
-		{
-		};
-		~infoElevent()
-		{
-		};
-		void update(float dt, float indent)
-		{
-			x.update(dt);
-			y.update(dt);
-			if (!x.isProgress())
-			{
-				int proc = rand() % 100;
-				float ind = (indent / 100.0f) * proc - indent / 2.0f;
-
-				x.set(ind, (rand() % 4) + 1);
-			}
-			if (!y.isProgress())
-			{
-				int proc = rand() % 100;
-				float ind = (indent / 100.0f) * proc - indent / 2.0f;
-
-				y.set(ind, (rand() % 4) + 1);
-			}
-			node->setPosition(originPos.x + x.get(), originPos.y + y.get());
-		};
-	};
-	std::vector<infoElevent*> infoElements;
+	std::vector<floatElement*> infoElements;
 
 	cocos2d::Label *aScore, *bScore, *lScore;
 

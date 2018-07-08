@@ -36,6 +36,7 @@ private:
 	void createStats();
 	void loadCards();
 	void loadModes();
+	void loadHistory();
 
 	cUserDefault();
 public:
@@ -44,6 +45,7 @@ public:
 	nlohmann::json gameStats;
 	nlohmann::json generatedCards;
 	nlohmann::json generatedModes;
+	nlohmann::json history;
 
 	std::string generateCard(int rare = -1);
 	std::string generateCard(std::vector<int> subjects);
@@ -60,6 +62,9 @@ public:
 	void saveProfile();
 	void saveModes();
 	void saveCards();
+
+	void addHistoryElement(std::string key, std::string name, int result);
+	void saveHistory();
 
 	static cUserDefault* getInstance();
 	~cUserDefault();

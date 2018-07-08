@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "string"
 #include "vector"
+#include "baseClasses/digitEx/cDigit.hpp"
 
 class cDinamicLayer : public cocos2d::Layer
 {

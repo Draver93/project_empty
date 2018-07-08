@@ -35,7 +35,7 @@ cocos2d::Scene*  cGameScene::bs_create()
 		btnBack->setPosition(btnExitRect.size.width / 2.0f + indent, visibleSize.height - btnExitRect.size.height / 2.0f - indent);
 		cocos2d::Rect btnRect = cocos2d::utils::getCascadeBoundingBox(btnBack);
 		btnBack->wnd->setWColor(cocos2d::Color3B(247, 116, 98));
-		btnBack->setLocalZOrder(3);
+		btnBack->setLocalZOrder(2);
 		pScene->addChild(btnBack);
 		btnBack->btnUp = [=](cocos2d::Touch* touch, cocos2d::Node* node)
 		{
@@ -46,7 +46,6 @@ cocos2d::Scene*  cGameScene::bs_create()
 
 		cocos2d::Sprite *icon_back = cocos2d::Sprite::create("icons/back.png");
 		setNodeSize(icon_back, btnBack->wnd->getWSize().width * 0.7f, true, true);
-		icon_back->setLocalZOrder(4);
 		btnBack->addChild(icon_back);
 	}
 
@@ -57,12 +56,11 @@ cocos2d::Scene*  cGameScene::bs_create()
 		btnSettings->setPosition(visibleSize.width - btnExitRect.size.width / 2.0f - indent, visibleSize.height - btnExitRect.size.height / 2.0f - indent);
 		cocos2d::Rect btnRect = cocos2d::utils::getCascadeBoundingBox(btnSettings);
 		btnSettings->wnd->setWColor(cocos2d::Color3B(96, 139, 171));
-		btnSettings->setLocalZOrder(3);
+		btnSettings->setLocalZOrder(2);
 		pScene->addChild(btnSettings);
 
 		cocos2d::Sprite *icon_exit = cocos2d::Sprite::create("icons/settings.png");
 		setNodeSize(icon_exit, btnSettings->wnd->getWSize().width * 0.7f, true, true);
-		icon_exit->setLocalZOrder(4);
 		btnSettings->addChild(icon_exit);
 	}
 
@@ -81,14 +79,8 @@ cocos2d::Scene*  cGameScene::bs_create()
 
 	auto userDefault = cUserDefault::getInstance();
 	layer = userDefault->activeMode->getGameNode(gameFieldSize);
+	layer->setLocalZOrder(5);
 	pScene->addChild(layer);
-	//gameType = userDefault->gameType;
-	//if (gameType == 0)setupLearn();
-	//else if (gameType == 1)setupCard();
-	//else if (gameType == 2)setupExam();
-	//cEndDialog* endDialog = new cEndDialog(this, this->examMode);
-	//this->addChild(endDialog);
-	/**/
 	return pScene;
 }
 
@@ -96,6 +88,4 @@ cocos2d::Scene*  cGameScene::bs_create()
 void cGameScene::update(float dt)
 {
 	layer->step(dt);
-	//cSceneManager *sceneManager = cSceneManager::getInstance();
-	//sceneManager->changeScene("menu");
 }

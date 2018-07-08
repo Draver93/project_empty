@@ -12,9 +12,23 @@ struct dayLevel
 {
 	std::string day;
 	std::string date;
+	std::string text;
+	int mark;
+	dayLevel()
+	{
+		day.clear();
+		date.clear();
+		text.clear();
+		mark = -1;
+	}
 };
 struct calElement
 {
+	cWindow *markerWnd;
+	cocos2d::Label *label;
+	cocos2d::Label *day;
+	cocos2d::Label *date;
+
 	cocos2d::Size originSize;
 	cocos2d::Vec2 originPos;
 	cDigit x, y;
@@ -52,6 +66,7 @@ private:
 	std::vector<calElement*> wnds;
 
 	cocos2d::Size size;
+	cocos2d::Size textSize;
 	cocos2d::Size elemSize;
 	cocos2d::Size dateSz, daySz;
 

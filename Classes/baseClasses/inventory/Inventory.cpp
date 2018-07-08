@@ -284,6 +284,7 @@ void cCardInventory::load()
 	stateCards.clear();
 	for (auto &it : userDefault->cards)
 	{
+		if (!std::strstr(it->id.c_str(), "st")) continue;
 		cardInfo tmp;
 		tmp.pCard = it;
 		stateCards.push_back(tmp);

@@ -632,12 +632,12 @@ void cEndDialog::createElements()
 	float halfindent = indent / 2.0f;
 
 	layer = cocos2d::LayerColor::create(cocos2d::Color4B(0, 0, 0, 230));
-	layer->setLocalZOrder(0);
+	layer->setLocalZOrder(-5);
 	layer->setPosition(-(visibleSize / 2.0f).width, -(visibleSize / 2.0f).height);
 	this->addChild(layer);
 	this->setPosition(visibleSize / 2.0f);
 
-
+	/*
 	float topBarH = visibleSize.height / 20.0f;
 	//top line
 	{
@@ -701,7 +701,7 @@ void cEndDialog::createElements()
 			this->addChild(wndName);
 		}
 	}
-
+	*/
 
 
 
