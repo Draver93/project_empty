@@ -26,9 +26,10 @@ private:
 	float widthField;
 	float scalePhysicalWorld;
 	b2World *world;
+
 	std::vector<sElement*> arrayElements;
 	std::vector<sElement*> pickElements;
-
+	cocos2d::Vec2 sizeField;
 	std::vector<int> lastPickLine;
 	int turnCount;
 

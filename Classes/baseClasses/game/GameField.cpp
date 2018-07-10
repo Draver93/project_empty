@@ -2,6 +2,8 @@
 
 void cGameField::createBorders(b2World * world, cocos2d::Vec2 nSize)
 {
+	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
+	float scaleH = visibleSize.height / visibleSize.width;
 	updateTime = 0;
 	//physicalField
 	{
@@ -67,16 +69,30 @@ void cGameField::createBorders(b2World * world, cocos2d::Vec2 nSize)
 				posLast.y += rad * 2.0f;
 			}
 		}
-
+		float left = posFirst.x - rad * 2.0f;
+		float right = posLast.x + rad * 2.0f;
+		sizeField.x = fabs(left) + right;
+		sizeField.y = (sizeField.x * scaleH) * 2.0f;
 		std::vector<b2Vec2> vertices;
-		vertices.push_back(b2Vec2(scalePhysicalWorld / 2.0f, scalePhysicalWorld * size.y / 2.0f));
-		vertices.push_back(b2Vec2(-scalePhysicalWorld / 2.0f, scalePhysicalWorld * size.y / 2.0f));
-		vertices.push_back(b2Vec2(-scalePhysicalWorld / 2.0f, -(scalePhysicalWorld * size.y) / 2.0f));
-		vertices.push_back(b2Vec2(scalePhysicalWorld / 2.0f, -(scalePhysicalWorld * size.y) / 2.0f));
+		vertices.push_back( b2Vec2(rad, sizeField.y / 2.0f) );
+		vertices.push_back( b2Vec2(-rad, sizeField.y / 2.0f) );
+		vertices.push_back( b2Vec2(-rad, -sizeField.y / 2.0f) );
+		vertices.push_back( b2Vec2(rad, -sizeField.y / 2.0f) );
+
 		b2Body* leftBorder = createColision(world, b2_staticBody, vertices);
 		b2Body* rightBorder = createColision(world, b2_staticBody, vertices);
-		leftBorder->SetTransform(b2Vec2(posFirst.x - rad - scalePhysicalWorld / 2.0f, scalePhysicalWorld * size.y / 2.0f), 0);
-		rightBorder->SetTransform(b2Vec2(posLast.x + rad + scalePhysicalWorld / 2.0f, scalePhysicalWorld * size.y / 2.0f), 0);
+		leftBorder->SetTransform(b2Vec2( posFirst.x - rad * 2.0f, sizeField.y / 2.0f), 0);
+		rightBorder->SetTransform(b2Vec2( posLast.x + rad * 2.0f, sizeField.y / 2.0f), 0);
+
+		vertices.clear();
+		vertices.push_back(b2Vec2(sizeField.x / 2.0f, rad));
+		vertices.push_back(b2Vec2(-sizeField.x / 2.0f, rad));
+		vertices.push_back(b2Vec2(-sizeField.x / 2.0f, -rad));
+		vertices.push_back(b2Vec2(sizeField.x / 2.0f, -rad));
+
+		b2Body* topBorder = createColision(world, b2_staticBody, vertices);
+		topBorder->SetTransform(b2Vec2(sizeField.x / 2.0f, sizeField.y), 0);
+
 	}
 
 	//Listener
@@ -193,6 +209,7 @@ void cGameField::pickElement(cocos2d::Touch* touch)
 				if (pickElements.empty())
 				{
 					pickElements.push_back(arrayElements.at(i));
+					arrayElements.at(i)->body->ApplyLinearImpulse(b2Vec2(0, 20), arrayElements.at(i)->body->GetWorldCenter(), true);
 					//arrayElements.at(i)->rotate = true;
 					arrayElements.at(i)->pSprite->setColor(cocos2d::Color3B(50, 50, 50));
 					changeSize(pickElements.back(), (1 * scalePhysicalWorld) / 2.7f);
@@ -255,7 +272,10 @@ sElement* cGameField::addElement(int type, b2BodyType bType)
 
 	element->type = type;
 	element->body = createColision(world, bType, rad);
-	element->body->SetTransform(b2Vec2((fieldWH.x * scalePhysicalWorld / 2.0f) + rand() % 5 - 2, size.y* scalePhysicalWorld * 2), 0);
+
+	int countPos = 10;
+	int posRand = rand() % countPos;
+	element->body->SetTransform(b2Vec2((sizeField.x / (countPos + 1.0f)) * (posRand + 1) - rad, sizeField.y * 0.6f), 0);
 
 	std::string fileName = "gameScreen/" + std::to_string(type) + ".png";
 

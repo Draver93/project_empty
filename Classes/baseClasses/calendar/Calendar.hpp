@@ -28,6 +28,7 @@ struct calElement
 	cocos2d::Label *label;
 	cocos2d::Label *day;
 	cocos2d::Label *date;
+	cocos2d::Label *mark;
 
 	cocos2d::Size originSize;
 	cocos2d::Vec2 originPos;

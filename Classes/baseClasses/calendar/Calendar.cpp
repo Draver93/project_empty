@@ -76,6 +76,7 @@ void cCalendar::updateList()
 			wnds.at(i)->label->setString(u8"?????????");
 			setNodeInRect(wnds.at(i)->label, textSize, 0);
 			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(150, 150, 150));
+			wnds.at(i)->mark->setColor(cocos2d::Color3B(150 * 0.8f, 150 * 0.8f, 150 * 0.8f));
 
 			continue;
 		}
@@ -83,27 +84,38 @@ void cCalendar::updateList()
 		wnds.at(i)->label->setString(list.at(first + i).text);
 		setNodeInRect(wnds.at(i)->label, textSize, 0);
 
+		auto color_5 = cocos2d::Color3B(225, 60, 60);
+		auto color_4 = cocos2d::Color3B(100, 100, 200);
+		auto color_3 = cocos2d::Color3B(70, 166, 70);
+		auto color_2 = cocos2d::Color3B(196, 201, 60);
+
 		int mk = list.at(first + i).mark;
 		if (mk == 5 || mk == 1)
 		{
-			//green
-			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(35, 110, 35));
+			wnds.at(i)->markerWnd->setWColor(color_5);
+			wnds.at(i)->mark->setString("5");
+			wnds.at(i)->mark->setColor(cocos2d::Color3B(color_5.r * 0.8f, color_5.g * 0.8f, color_5.b * 0.8f));
 		}
 		else if (mk == 4)
 		{
-			//lite green
-			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(100, 190, 21));
+			wnds.at(i)->markerWnd->setWColor(color_4);
+			wnds.at(i)->mark->setString("4");
+			wnds.at(i)->mark->setColor(cocos2d::Color3B(color_4.r * 0.8f, color_4.g * 0.8f, color_4.b * 0.8f));
 		}
 		else if (mk == 3)
 		{
-			// orange
-			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(250, 190, 50));
+			wnds.at(i)->markerWnd->setWColor(color_3);
+			wnds.at(i)->mark->setString("3");
+			wnds.at(i)->mark->setColor(cocos2d::Color3B(color_3.r * 0.8f, color_3.g * 0.8f, color_3.b * 0.8f));
+
 		}
 		else if (mk == 2 || mk == 0)
 		{
-			// red
-			wnds.at(i)->markerWnd->setWColor(cocos2d::Color3B(230, 70, 10));
+			wnds.at(i)->markerWnd->setWColor(color_2);
+			wnds.at(i)->mark->setString("2");
+			wnds.at(i)->mark->setColor(cocos2d::Color3B(color_2.r * 0.8f, color_2.g * 0.8f, color_2.b * 0.8f));
 		}
+
 	}
 }
 
@@ -195,6 +207,12 @@ cCalendar::cCalendar(cocos2d::Size dSize)
 		el->wnd->addChild(el->date);
 		el->date->setPosition(-el->originSize.width / 2.0f + locIndent + daySz.width / 2.0f, el->day->getPosition().y - daySz.height /2.0f - locIndent / 2.0f - dateSz.height / 2.0f);
 
+		el->mark = cocos2d::Label::createWithTTF(*gTtfConfig, "?", cocos2d::TextHAlignment::CENTER);
+		el->mark->setColor(cocos2d::Color3B(150 * 0.8f, 150 * 0.8f, 150 * 0.8f));
+		el->mark->setAnchorPoint(cocos2d::Vec2(0.5f, 0.58f));
+		el->mark->setName("mark");
+		setNodeInRect(el->mark, sz * 0.8f, 0);
+		el->markerWnd->addChild(el->mark);
 	}
 
 
