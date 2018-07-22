@@ -45,7 +45,7 @@ b2Body * createColision(b2World *m_world, b2BodyType flag, float radius)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &circleShape; //change the shape of the fixture
 	fixtureDef.friction = 0.0f;
-	fixtureDef.density = 0.3f;
+	fixtureDef.density = 1.3f;
 	fixtureDef.restitution = 0.0f;
 	Body->CreateFixture(&fixtureDef); //add a fixture to the body
 	Body->SetFixedRotation(true);

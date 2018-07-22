@@ -487,7 +487,7 @@ cPlayDialog::cPlayDialog()
 	{
 		if (loc_x >= x) { loc_x = 0; loc_y += 1; }
 
-		cDinamicLayer* layer = it->getModeIntro(btnSize);
+		cDinamicLayer* layer = it->getNode(0, btnSize);
 		node->addChild(layer);
 		modeEl* el = new modeEl();
 		el->layer = layer;
@@ -549,7 +549,7 @@ cEndDialog::cEndDialog()
 	createElements();
 
 	cUserDefault *userDefault = cUserDefault::getInstance();
-	outro = userDefault->activeMode->getModeOutro(cocos2d::Size(0, 0));
+	outro = userDefault->activeMode->getNode(2 ,cocos2d::Size(0, 0));
 	this->addChild(outro);
 	//Level
 	/*//commented +

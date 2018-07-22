@@ -122,10 +122,7 @@ void cGameField::createBorders(b2World * world, cocos2d::Vec2 nSize)
 					{
 						if (pickElements.at(i) == arrayElements.at(j))
 						{
-							world->DestroyBody(arrayElements.at(j)->body);
-							this->removeChild(arrayElements.at(j)->pSprite, true);
-							delete arrayElements.at(j);
-							arrayElements.erase(arrayElements.begin() + j);
+							deleteElement(j);
 							break;
 						}
 					}
@@ -173,7 +170,7 @@ void cGameField::changeSize(sElement *el, float size)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &circleShape; //change the shape of the fixture
 	fixtureDef.friction = 0.0f;
-	fixtureDef.density = 10.0f;
+	fixtureDef.density = 0.1f;
 	fixtureDef.restitution = 0.1f;
 
 	el->body->CreateFixture(&fixtureDef); //add a fixture to the body
@@ -209,7 +206,7 @@ void cGameField::pickElement(cocos2d::Touch* touch)
 				if (pickElements.empty())
 				{
 					pickElements.push_back(arrayElements.at(i));
-					arrayElements.at(i)->body->ApplyLinearImpulse(b2Vec2(0, 20), arrayElements.at(i)->body->GetWorldCenter(), true);
+					//arrayElements.at(i)->body->ApplyLinearImpulse(b2Vec2(0, 20), arrayElements.at(i)->body->GetWorldCenter(), true);
 					//arrayElements.at(i)->rotate = true;
 					arrayElements.at(i)->pSprite->setColor(cocos2d::Color3B(50, 50, 50));
 					changeSize(pickElements.back(), (1 * scalePhysicalWorld) / 2.7f);
@@ -251,7 +248,16 @@ cGameField::cGameField(float width, cocos2d::Vec2 size)
 		for (unsigned int i = 0; i < arrayElements.size(); i++)
 		{
 			b2Vec2 pos = arrayElements.at(i)->body->GetPosition();
+			//float angle = arrayElements.at(i)->body->GetAngle() * 100.0f;
 			arrayElements.at(i)->pSprite->setPosition(pos.x * scl, pos.y * scl);
+			//arrayElements.at(i)->pSprite->setRotation(-angle);
+			if (pos.y < -sizeField.y * 0.5f || 
+				pos.y > sizeField.y + sizeField.y * 0.5f ||
+				pos.x < -sizeField.x * 0.5f ||
+				pos.x > sizeField.x + sizeField.x * 0.5f)
+			{
+				deleteElement(i);
+			}
 		}
 	};
 }
@@ -272,7 +278,6 @@ sElement* cGameField::addElement(int type, b2BodyType bType)
 
 	element->type = type;
 	element->body = createColision(world, bType, rad);
-
 	int countPos = 10;
 	int posRand = rand() % countPos;
 	element->body->SetTransform(b2Vec2((sizeField.x / (countPos + 1.0f)) * (posRand + 1) - rad, sizeField.y * 0.6f), 0);
@@ -298,6 +303,10 @@ std::vector<sElement*> cGameField::getElements()
 	return arrayElements;
 }
 
-void cGameField::deleteElement(b2Body * type)
+void cGameField::deleteElement(int pos)
 {
+	world->DestroyBody(arrayElements.at(pos)->body);
+	this->removeChild(arrayElements.at(pos)->pSprite, true);
+	delete arrayElements.at(pos);
+	arrayElements.erase(arrayElements.begin() + pos);
 }

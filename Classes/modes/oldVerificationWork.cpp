@@ -1,4 +1,4 @@
-﻿#include "MM_Turns.hpp"
+﻿#include "VerificationWork.hpp"
 
 cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlayerSkills, std::vector<int> inGameLevel, std::vector<int> inSubjects, cTeacherCard* teacherCard, float inGoal, int inTurnCount, int days)
 {
@@ -15,7 +15,7 @@ cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlay
 
 	auto userDefault = cUserDefault::getInstance();
 	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-    
+
 	auto gTtfConfig = userDefault->font;
 	auto gTtfConfigHd = userDefault->fontHd;
 
@@ -55,7 +55,7 @@ cMMTurnsGameNode::cMMTurnsGameNode(cocos2d::Size size, std::vector<float> inPlay
 	auto ch = infoField->getChildren();
 	for (auto it : ch) it->setOpacity(0);
 	this->addChild(infoField);
-	
+
 
 	cocos2d::Size sbSize = { ifSize.height * 0.7f, ifSize.height * 0.7f};
 	cocos2d::Sprite *scoreBar = cocos2d::Sprite::create("icons/element.png");
@@ -157,29 +157,7 @@ void cMMTurnsGameNode::step(float dt)
 void cMMTurnsGameNode::reset()
 {
 }
-void cMMTurnsGameNode::addInTable(std::string text)
-{
-	auto userDefault = cUserDefault::getInstance();
-	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-	auto gTtfConfig = userDefault->font;
-	float indent = visibleSize.height / 70.0f;
-	cocos2d::Size rtSize = cardField->getWSize();
 
-	cocos2d::Label* label = cocos2d::Label::createWithTTF(*gTtfConfig, text, cocos2d::TextHAlignment::CENTER);
-	setNodeInRect(label, cocos2d::Size(rtSize.width, rtSize.height / 4.0f), rtSize.width * 0.05f);
-	cardField->addChild(label);
-	
-	if (tableArray.empty())
-	{
-		label->setPosition(0, -rtSize.height / 2.0f);
-	}
-	else
-	{
-		label->setPosition(0, tableArray.back()->getPosition().y - rtSize.height / 4.0f);
-	}
-	tableArray.push_back(label);
-
-}
 void cMMTurnsGameNode::updateInfoBar()
 {
 	scoreLabel->setString(std::to_string(currentScore.get()).substr(0, std::to_string(currentScore.get()).find('.') + 2));
@@ -258,6 +236,8 @@ void cMMTurnsGameNode::checkGameFinish()
 	
 	}
 }
+
+
 
 /////
 cMMTurnsIntroNode::cMMTurnsIntroNode(cocos2d::Size size, cBaseMode *thisMode)

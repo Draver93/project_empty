@@ -24,6 +24,7 @@ public:
 };
 
 struct floatElement {
+	std::string name;
 	cBaseNode *node;
 	cocos2d::Vec2 originPos;
 	cDigit x, y;
@@ -31,6 +32,11 @@ struct floatElement {
 
 	floatElement()
 	{
+		name.clear();
+		node = NULL;
+		originPos.setZero();
+		x = 0;
+		y = 0;
 	};
 	~floatElement()
 	{

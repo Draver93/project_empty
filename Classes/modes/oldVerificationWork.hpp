@@ -1,5 +1,6 @@
-#ifndef MM_TURNS_HPP
-#define MM_TURNS_HPP
+#ifndef VERIFICATION_WORK_HPP
+#define VERIFICATION_WORK_HPP
+
 #include "baseClasses/UserDefault.hpp"
 #include "baseClasses/BaseMode.hpp"
 #include "baseClasses/DinamicLayer.hpp"
@@ -8,6 +9,7 @@
 #include "baseClasses/game/GameField.hpp"
 #include "baseClasses/dialogs/Dialog.hpp"
 #include "cards/Cards.hpp"
+
 class cMMTurnsGameNode : public cDinamicLayer
 {
 private:
@@ -106,4 +108,4 @@ public:
 	std::string generateMode(std::string modeName);
 };
 
-#endif // !MM_TURNS_HPP
+#endif // !VERIFICATION_WORK_HPP

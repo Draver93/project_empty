@@ -11,10 +11,9 @@ public:
 	cBaseMode();
 	~cBaseMode();
 
-	virtual cDinamicLayer* getModeIntro(cocos2d::Size size) = 0;
-	virtual cDinamicLayer* getGameNode(cocos2d::Size size) = 0;
-	virtual cDinamicLayer* getModeOutro(cocos2d::Size size) = 0;
-	virtual std::string generateMode(std::string modeName) = 0;
+	virtual cDinamicLayer* getNode(int type, cocos2d::Size size) = 0;
+	virtual std::string getModeName() = 0;
+
 };
 
 

@@ -12,7 +12,7 @@ cGameScene::~cGameScene()
 cocos2d::Scene*  cGameScene::bs_create()
 {
 	cocos2d::Scene* pScene = cocos2d::Scene::create();
-
+	cUserDefault *userDefault = cUserDefault::getInstance();
 	auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	auto origin = cocos2d::Director::getInstance()->getVisibleOrigin();
 	auto center = cocos2d::Point(visibleSize.width / 2.0f + origin.x, visibleSize.height / 2.0f + origin.y);
@@ -64,21 +64,30 @@ cocos2d::Scene*  cGameScene::bs_create()
 		btnSettings->addChild(icon_exit);
 	}
 
+	cocos2d::Size tbSize = cocos2d::Size(visibleSize.width - indent * 4.0f - topBarH * 2.0f, topBarH);
 	//top bar
 	{
-		topBar = new cWindow(cocos2d::Size(visibleSize.width - indent * 4.0f - topBarH * 2.0f, topBarH), W_MUTE, 0);
+		topBar = new cWindow(tbSize, W_MUTE, 0);
 		cocos2d::Rect topBarRect = cocos2d::utils::getCascadeBoundingBox(topBar);
 		topBar->setPosition(topBarRect.size.width / 2.0f + indent * 2.0f + topBarH, visibleSize.height - (topBarRect.size.height / 2.0f) - indent);
 		topBar->setWColor(cocos2d::Color3B(0, 0, 0));
-		topBar->setOpacity(100);
+		topBar->setCascadeOpacityEnabled(false);
+		auto ch = topBar->getChildren();
+		for (auto &it : ch)it->setOpacity(100);
 		topBar->setLocalZOrder(2);
 		pScene->addChild(topBar);
 	}
 
+	cocos2d::Label *gameDesc = cocos2d::Label::createWithTTF(*userDefault->fontHd, userDefault->activeMode->getModeName(), cocos2d::TextHAlignment::CENTER);
+	gameDesc->setAnchorPoint(cocos2d::Vec2(0.5f, 0.5f));
+	gameDesc->setColor(cocos2d::Color3B(230, 230, 230));
+	setNodeInRect(gameDesc, tbSize * 0.8f, 0);
+	topBar->setOpacity(100);
+	topBar->addChild(gameDesc);
+
 	cocos2d::Size gameFieldSize = { visibleSize.width - indent * 2.0f, visibleSize.height - indent * 3.0f - topBarH };
 
-	auto userDefault = cUserDefault::getInstance();
-	layer = userDefault->activeMode->getGameNode(gameFieldSize);
+	layer = userDefault->activeMode->getNode(1 ,gameFieldSize);
 	layer->setLocalZOrder(5);
 	pScene->addChild(layer);
 	return pScene;

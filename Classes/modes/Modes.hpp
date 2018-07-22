@@ -1,10 +1,11 @@
 #ifndef MODES_HPP
 
-#include "MM_Count.hpp"
-#include "MM_Time.hpp"
-#include "MM_Turns.hpp"
-
-#include "SM_Card.hpp"
-#include "SM_LvlUp.hpp"
+#include "testWork/testWork.hpp"
+#include "verificationWork/verificationWork.hpp"
+#include "IndependentWork/independentWork.hpp"
+#include "schoolCircle/schoolCircle.hpp"
+#include "courseWork/courseWork.hpp"
+#include "training/training.hpp"
+#include "rest/rest.hpp"
 
 #endif // !MODES_HPP

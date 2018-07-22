@@ -46,7 +46,7 @@ public:
 
 	sElement* addElement(int type, b2BodyType bType = b2_dynamicBody);
 	std::vector<sElement*> getElements();
-	void deleteElement(b2Body *type);
+	void deleteElement(int pos);
 
 	std::vector<int> getLastLine() { return lastPickLine; };
 	int getTurnCount() { return turnCount; }

@@ -38,69 +38,98 @@ cUserDefault * cUserDefault::getInstance()
 
 void cUserDefault::updateCurrentModes()
 {
+	generatedModes.size();
 	for (auto it : modes)delete it;
 	modes.clear();
-
 	auto level = profile["aLevel"];
-	int sh = level.at(0) - 1;
-	int cl = level.at(1) - 1;
-	int sem = level.at(2) - 1;
-	int day = level.at(3) - 1;
 
-	std::vector<int> data = schools.at(sh).classes.at(cl).semesters.at(sem).days.at(day).data;
-
-	for (unsigned int i = 0; i < data.size(); i++)
-	{
-		switch (data.at(i))
+	int size = generatedModes["data"].size();
+	if (size < 8)
+		for (int i = 0; i < 8 - size; i++)
 		{
-			case -6:
+			std::string data;
+			//getNextLevelType
+			int next = 1;// rand() % 6;
+		
+			switch (next)
 			{
-				break;
+				case 0: data = cTestWork::generateMode();
+					break;
+				case 1: data = cVerificationWork::generateMode();
+					break;
+				case 2: data = cIndependentWork::generateMode();
+					break;
+				case 3: data = cCourseWork::generateMode();
+					break;
+				case 4: data = cRest::generateMode();
+					break;
+				case 5: data = cSchoolCircle::generateMode();
+					break;
+				case 6: data = cTraining::generateMode();
+					break;
 			}
-			case -5:
-			{
-				break;
-			}
-			case -4:
-			{
-				cSMLvlUp *lvlUp = new cSMLvlUp("md_" + std::to_string(i));
-				modes.push_back(lvlUp);
-				break;
-			}
-			case -3:
-			{
-				break;
-			}
-			case -2:
-			{
-				break;
-			}
-			case -1:
-			{
-				cSMCard *card = new cSMCard("md_" + std::to_string(i));
-				modes.push_back(card);
-				break;
-			}
+			generatedModes["data"].push_back(data);
+		}
+
+	for (nlohmann::json::iterator it = generatedModes["data"].begin(); it != generatedModes["data"].end(); ++it) 
+	{
+		std::string data = it.value();
+		std::vector<std::string> vec = Split(data, '/');
+
+		switch (std::stoi(vec.at(0)))
+		{
 			case 0:
 			{
-				cMMTurns *turn = new cMMTurns("md_" + std::to_string(i));
-				modes.push_back(turn);
+				cTestWork *mode = new cTestWork(vec.at(1));
+				modes.push_back(mode);
 				break;
 			}
 			case 1:
 			{
-				/*cMMTime *time = new cMMTime();
-				modes.push_back(time);
-				break;*/
+				cVerificationWork *mode = new cVerificationWork(vec.at(1));
+				modes.push_back(mode);
+				break;
 			}
 			case 2:
 			{
-				/*cMMCount *count = new cMMCount();
-				modes.push_back(count);
-				break;*/
+				cIndependentWork *mode = new cIndependentWork(vec.at(1));
+				modes.push_back(mode);
+				break;
+			}
+			case 3:
+			{
+				cCourseWork *mode = new cCourseWork(vec.at(1));
+				modes.push_back(mode);
+				break;
+			}
+			case 4:
+			{
+				cRest *mode = new cRest(vec.at(1));
+				modes.push_back(mode);
+				break;
+			}
+			case 5:
+			{
+				cSchoolCircle *mode = new cSchoolCircle(vec.at(1));
+				modes.push_back(mode);
+				break;
+			}
+			case 6:
+			{
+				cTraining *mode = new cTraining(vec.at(1));
+				modes.push_back(mode);
+				break;
 			}
 		}
 	}
+	saveModes();
+	/*int sh = level.at(0) - 1;
+	int cl = level.at(1) - 1;
+	int sem = level.at(2) - 1;
+	int day = level.at(3) - 1;
+
+	std::vector<int> data = schools.at(sh).classes.at(cl).semesters.at(sem).days.at(day).data;*/
+
 }
 
 
@@ -311,13 +340,11 @@ void cUserDefault::addHistoryElement(std::string key, std::string name, int resu
 	//history.erase("one");
 	history[key] = name + "|" + std::to_string(result);
 }
-
 void cUserDefault::saveHistory()
 {
 	cocos2d::FileUtils::getInstance()->writeStringToFile(history.dump(), cocos2d::FileUtils::getInstance()->getWritablePath() + "history.json");
 	loadCards();
 }
-
 void cUserDefault::loadHistory()
 {
 	std::string file = cocos2d::FileUtils::getInstance()->getStringFromFile(cocos2d::FileUtils::getInstance()->getWritablePath() + "history.json");

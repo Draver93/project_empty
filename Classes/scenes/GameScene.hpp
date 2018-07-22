@@ -18,13 +18,12 @@ private:
 	float addtime = 0;
 	int countElements;
 
-	cWindow *topBar, *btmBar;
-	cWindow* infoField;
 	cDinamicLayer *layer;
 	cocos2d::ClippingNode *scissors;
 
 public:
 	cButton *btnSettings, *btnBack;
+	cWindow *topBar;
 
 	cGameScene();
 	~cGameScene();
